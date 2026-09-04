@@ -43,7 +43,7 @@ def create_dataloader(shuffle=True, pin_memory=True, num_workers=0, test=True, b
         batch_size=batch_size,
         shuffle=shuffle,
         pin_memory=pin_memory,
-        drop_last=True
+        drop_last=True,
     )
 
     test_dataloader = DataLoader(
@@ -51,7 +51,7 @@ def create_dataloader(shuffle=True, pin_memory=True, num_workers=0, test=True, b
         batch_size=batch_size,
         shuffle=shuffle,
         pin_memory=pin_memory,
-        drop_last=True
+        drop_last=True,
     )
 
     return train_dataloader, test_dataloader

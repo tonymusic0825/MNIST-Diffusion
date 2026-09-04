@@ -4,6 +4,7 @@ class NoiseSchedule():
 
     def __init__(self, T=1000, beta_s=1e-4, beta_e=0.02, device="cuda"):
         self.T = T
+        self.device = device
         self.beta = torch.linspace(beta_s, beta_e, self.T, device=self.device) 
         self.alpha = 1.0 - self.beta
         self.alpha_cumprod = torch.cumprod(self.alpha, dim=0)
