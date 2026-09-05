@@ -16,8 +16,6 @@ featuring a heavily customized Conditional U-Net with fused temporal-class embed
 * **Fused Embeddings Pipeline:** Integrates continuous Sinusoidal Positional Embeddings (for diffusion timesteps) with discrete PyTorch `nn.Embedding` vectors (for digit classes), merging them additively before injecting them deep into every residual block.
 * **Global Self-Attention Bottleneck:** Upgrades the standard fully-convolutional U-Net by embedding Multi-Head Self-Attention at the lowest resolution bottleneck. This guarantees the network learns global spatial dependencies (e.g., smoothly connecting the top and bottom loops of an '8') rather than relying solely on local 3x3 pixel receptive fields.
 * **SiLU (Swish) Activations:** Transitions from standard ReLUs to SiLU activations across all convolutional layers, preventing dead gradients when predicting the negative, continuous values inherent to Gaussian noise distributions.
-* **Production-Grade CLI & Reproducibility:** Clean entry points powered by `argparse` supporting configurable hyperparameter flags, checkpoint management, and interactive CLI-based generation with Matplotlib visualization.
-
 ---
 
 The model progressively denoises random static over 1,000 timesteps to form the requested digit.
