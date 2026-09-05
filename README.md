@@ -90,7 +90,7 @@ pip install -r requirements.txt
 ### Model Training
 Train the conditional U-Net from scratch. The script monitors validation loss and automatically checkpoints the best model weights.
 ```bash
-python train_cond.py --epochs 50 --batch-size 128 --lr 0.0002 --timesteps 1000
+python train_cond.py --epochs 50 --batch_size 128 --lr 0.0002 --timesteps 1000
 ```
 
 ### Interactive Generation (Sampling)
@@ -108,10 +108,10 @@ python sample_cond.py -d -g
 | Command Script | Flag | Type | Default | Description |
 | :--- | :--- | :--- | :--- | :--- |
 | `train_cond.py` | `--epochs` | `int` | `50` | Total training epochs |
-| `train_cond.py` | `--batch-size` | `int` | `128` | Dataloader batch size |
+| `train_cond.py` | `--batch_size` | `int` | `128` | Dataloader batch size |
 | `train_cond.py` | `--lr` | `float` | `0.0002` | Learning rate for Adam optimizer |
 | `train_cond.py` | `--timesteps` | `int` | `1000` | Total diffusion steps (T) |
-| `train_cond.py` | `--save-dir` | `str` | `./checkpoints` | Checkpoint output directory |
+| `train_cond.py` | `--save_dir` | `str` | `./checkpoints` | Checkpoint output directory |
 | `sample_cond.py` | `--display` | `flag` | `False` | Opens Matplotlib GUI for final image |
 | `sample_cond.py` | `--gif` | `flag` | `False` | Exports generation sequence to ./readme |
 
