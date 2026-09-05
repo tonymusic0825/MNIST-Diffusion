@@ -19,6 +19,7 @@ os.makedirs("./checkpoints", exist_ok=True)
 
 # Train loop
 for epoch in range(epochs):
+    epoch_loss = 0.0
     for images, _ in train_dataloader:
         images = images.to(device)
         t = torch.randint(0, (T-1), (images.shape[0],)).to(device)
@@ -32,12 +33,15 @@ for epoch in range(epochs):
         pred_loss.backward()
         optimizer.step()
 
-    if pred_loss.item() < pre_loss:
+        epoch_loss += pred_loss.item()
+
+    avg_loss = epoch_loss / len(train_dataloader)
+    if avg_loss < pre_loss:
         print("New Loss Record detected weights have been saved to ./checkpoints as 'mnist_diffusion_weights.pth'")
         torch.save(model.state_dict(), "./checkpoints/mnist_diffusion_weights.pth")
     
-        pre_loss = pred_loss.item()
+        pre_loss = avg_loss
     
-    print(f"Epoch {epoch+1}/{epochs} | Loss: {pred_loss.item():.4f}")
+    print(f"Epoch {epoch+1}/{epochs} | Loss: {avg_loss:.4f}")
 
 
