@@ -9,8 +9,9 @@ import argparse
 def main(args):
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     T = args.timesteps
-    
-    train_dataloader, _ = create_dataloader(test=False)
+
+    batch_size = args.batch_size
+    train_dataloader, _ = create_dataloader(test=False, batch_size=batch_size)
     noise_schedule = NoiseSchedule(T=T)
     model = ConditionalUNet().to(device)
 
@@ -57,6 +58,7 @@ if __name__ == "__main__":
     parser.add_argument("--lr", type=float, default=2e-4, help="Learning rate for the optimizer")
     parser.add_argument("--timesteps", type=int, default=1000, help="Total diffusion timesteps (T)")
     parser.add_argument("--save_dir", type=str, default="./checkpoints", help="Directory to save model weights")
+    parser.add_argument("--batch_size", type=int, default=128, help="Batch size for dataloader")
     
     args = parser.parse_args()
     main(args)
