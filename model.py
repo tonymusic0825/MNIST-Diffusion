@@ -57,7 +57,7 @@ class UNet(nn.Module):
             nn.Linear(time_emb_dim * 4, time_emb_dim)
         )
 
-        # Encoder (Doubled Depth)
+        # Encoder 
         self.down1_1 = ConvBlock(1, 32, time_emb_dim)
         self.down1_2 = ConvBlock(32, 32, time_emb_dim)
         self.pool1 = nn.MaxPool2d(kernel_size=2)
@@ -71,7 +71,7 @@ class UNet(nn.Module):
         self.attn = SelfAttention(128)
         self.bot2 = ConvBlock(128, 128, time_emb_dim)
 
-        # Decoder (Doubled Depth)
+        # Decoder 
         self.up1 = nn.ConvTranspose2d(128, 64, kernel_size=2, stride=2)
         self.up_conv1_1 = ConvBlock(128, 64, time_emb_dim) # 64 (up) + 64 (skip)
         self.up_conv1_2 = ConvBlock(64, 64, time_emb_dim)

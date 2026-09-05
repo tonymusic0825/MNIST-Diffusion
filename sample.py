@@ -39,19 +39,15 @@ with torch.no_grad():
             z = torch.randn_like(x)
             x = x + torch.sqrt(beta_t) * z
 
-        # Save frame every 10 steps
         if i % 10 == 0 or i == 0:
             frame = x[0].detach().cpu().squeeze().numpy()
 
-            # Convert [-1, 1] -> [0, 255]
             frame = (frame + 1) / 2
             frame = np.clip(frame, 0, 1)
             frame = (frame * 255).astype(np.uint8)
 
-            # Convert to PIL image
             frame = Image.fromarray(frame)
 
-            # Make it larger so the GIF isn't tiny
             frame = frame.resize((280, 280), Image.Resampling.NEAREST)
 
             frames.append(frame)
@@ -59,14 +55,7 @@ with torch.no_grad():
     x = (x.clamp(-1, 1) + 1) / 2
     x = x.cpu().numpy()
 
-    # fig, axes = plt.subplots(3, 3)
-    # for idx, ax in enumerate(axes.flatten()):
-    #     ax.imshow(x[idx, 0], cmap="gray")
-    #     ax.axis("off")
-    # plt.imshow(x.squeeze(), cmap="gray")
-    # plt.show()
-
-    # Save GIF
+# Save GIF
 frames[0].save(
     "./readme/diffusion.gif",
     save_all=True,
