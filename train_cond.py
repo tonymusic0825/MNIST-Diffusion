@@ -4,45 +4,59 @@ from model_cond import ConditionalUNet
 import torch
 import torch.nn as nn
 import os
+import argparse
 
-device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-T = 1000
-train_dataloader, test_dataloader = create_dataloader(test=False)
-noise_schedule = NoiseSchedule(T=T)
-model = ConditionalUNet().to(device)
-
-optimizer = torch.optim.Adam(model.parameters(), lr=2e-4)
-loss = nn.MSELoss()
-epochs = 50
-pre_loss = float("inf")
-os.makedirs("./checkpoints", exist_ok=True)
-
-# Train loop
-for epoch in range(epochs):
-    epoch_loss = 0.0
-    for images, labels in train_dataloader:
-        images = images.to(device)
-        labels = labels.to(device)
-        t = torch.randint(0, (T-1), (images.shape[0],)).to(device)
-        noisy_images, real_noise = noise_schedule.forward(images, t)
-
-        pred_noise = model(noisy_images, t, labels)
-        pred_loss = loss(pred_noise, real_noise)
-
-        # Backprop
-        optimizer.zero_grad()
-        pred_loss.backward()
-        optimizer.step()
-
-        epoch_loss += pred_loss.item()
-
-    avg_loss = epoch_loss / len(train_dataloader)
-    if avg_loss < pre_loss:
-        print("New Loss Record detected weights have been saved to ./checkpoints as 'cond_mnist_diffusion_weights.pth'")
-        torch.save(model.state_dict(), "./checkpoints/cond_mnist_diffusion_weights.pth")
+def main(args):
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    T = args.timesteps
     
-        pre_loss = avg_loss
+    train_dataloader, _ = create_dataloader(test=False)
+    noise_schedule = NoiseSchedule(T=T)
+    model = ConditionalUNet().to(device)
+
+    optimizer = torch.optim.Adam(model.parameters(), lr=args.lr)
+    loss = nn.MSELoss()
+    epochs = args.epochs
+
+    pre_loss = float("inf")
+    os.makedirs(args.save_dir, exist_ok=True)
+    save_path = os.path.join(args.save_dir, "cond_mnist_diffusion_weights.pth")
+
+    # Train loop
+    for epoch in range(epochs):
+        epoch_loss = 0.0
+        for images, labels in train_dataloader:
+            images = images.to(device)
+            labels = labels.to(device)
+            
+            t = torch.randint(0, (T-1), (images.shape[0],)).to(device)
+            noisy_images, real_noise = noise_schedule.forward(images, t)
+
+            pred_noise = model(noisy_images, t, labels)
+            pred_loss = loss(pred_noise, real_noise)
+
+            # Backprop
+            optimizer.zero_grad()
+            pred_loss.backward()
+            optimizer.step()
+
+            epoch_loss += pred_loss.item()
+
+        avg_loss = epoch_loss / len(train_dataloader)
+        
+        if avg_loss < pre_loss:
+            print(f"New Loss Record detected. Weights saved to {save_path}")
+            torch.save(model.state_dict(), save_path)
+            pre_loss = avg_loss
+
+        print(f"Epoch {epoch+1}/{epochs} | Loss: {avg_loss:.4f}")
+
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser(description="Train a Conditional MNIST Diffusion Model")
+    parser.add_argument("--epochs", type=int, default=50, help="Total number of training epochs")
+    parser.add_argument("--lr", type=float, default=2e-4, help="Learning rate for the optimizer")
+    parser.add_argument("--timesteps", type=int, default=1000, help="Total diffusion timesteps (T)")
+    parser.add_argument("--save_dir", type=str, default="./checkpoints", help="Directory to save model weights")
     
-    print(f"Epoch {epoch+1}/{epochs} | Loss: {avg_loss:.4f}")
-
-
+    args = parser.parse_args()
+    main(args)
