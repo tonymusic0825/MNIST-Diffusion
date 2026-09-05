@@ -1,2 +1,4 @@
 /data
 test.py
+/checkpoints
+/__pycache__

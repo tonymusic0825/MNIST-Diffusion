@@ -29,7 +29,7 @@ def download_MNIST(root="./data", download=True):
 
     return train_dataset, test_dataset
 
-def create_dataloader(shuffle=True, pin_memory=True, num_workers=0, test=True, batch_size=32):
+def create_dataloader(shuffle=True, pin_memory=True, num_workers=0, test=True, batch_size=64):
 
     train_dataset, test_dataset = download_MNIST()
 
