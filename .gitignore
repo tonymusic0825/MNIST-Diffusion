@@ -2,3 +2,4 @@
 test.py
 /checkpoints
 /__pycache__
+/outputs
